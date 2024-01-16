@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraText">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
 
     <application
-        android:name=".appclass.MyApplication"
+        android:name="com.example.chatapp.appclass.MyApplication"
         android:allowBackup="true"
+        android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -16,19 +24,19 @@
         android:theme="@style/Theme.ChatApp"
         tools:targetApi="31">
         <activity
-            android:name=".presentationlayer.view.ChatActivity"
+            android:name="com.example.chatapp.presentationlayer.view.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".presentationlayer.view.MainActivity"
+            android:name="com.example.chatapp.presentationlayer.view.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".presentationlayer.view.HomeActivity"
+            android:name="com.example.chatapp.presentationlayer.view.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".presentationlayer.view.LoginActivity"
+            android:name="com.example.chatapp.presentationlayer.view.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".presentationlayer.view.SplashActivity"
+            android:name="com.example.chatapp.presentationlayer.view.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

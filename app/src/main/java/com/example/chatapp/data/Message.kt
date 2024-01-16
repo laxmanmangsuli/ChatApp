@@ -1,6 +1,8 @@
 package com.example.chatapp.data
 
 data class Message(
+    val type: String ="",
+    val imageUri: String,
     val content: String = "",
     val time: Long = 0,
     val messageId: String = "",
@@ -9,3 +11,6 @@ data class Message(
     val receiverId: String = "",
     val chatId: String = "",
 )
+{
+    constructor() : this("", "", "", 0, "", "", "", "", "")
+}

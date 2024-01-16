@@ -8,6 +8,7 @@ import com.example.chatapp.domain.repository.AuthRepository
 import com.example.chatapp.utils.Resource
 import com.example.chatapp.presentationlayer.view.HomeActivity
 import com.example.chatapp.presentationlayer.view.LoginActivity
+import com.example.chatapp.presentationlayer.view.SignupActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,12 +27,14 @@ class AuthRepositoryImpl @Inject constructor(
         return firebaseFireStore.collection("Users").document().id
     }
 
-    override fun createUser(user: Users): Flow<Resource<Boolean>> = callbackFlow {
+    override fun createUser(user: Users, signupActivity: SignupActivity): Flow<Resource<Boolean>> = callbackFlow {
         try {
             trySend(Resource.Loading)
             firebaseFireStore.collection("Users").add(user)
                 .addOnSuccessListener {
                     trySend(Resource.Success(true))
+                    signupActivity.startActivity(Intent(signupActivity,LoginActivity::class.java))
+                    signupActivity.finish()
                     close()
                 }
                 .addOnFailureListener { e ->
@@ -121,6 +124,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     SharedPrefs.setUserCredential = id
                                     val intent = Intent(activity, HomeActivity::class.java)
                                     activity.startActivity(intent)
+                                    activity.finish()
                                 } else {
                                     InjectorUtil.showToast("Please verify your email.")
                                 }

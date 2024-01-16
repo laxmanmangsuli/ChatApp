@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.chatapp.utils.InjectorUtil
 import com.example.chatapp.data.Users
 import com.example.chatapp.domain.repository.AuthRepository
+import com.example.chatapp.presentationlayer.view.SignupActivity
 import com.example.chatapp.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,13 +20,18 @@ class SignUpViewModel @Inject constructor(
     private val fireStore: FirebaseFirestore,
 ) : ViewModel() {
 
-    fun createUserProfile(username: String, password: String, email: String) {
+    fun createUserProfile(
+        username: String,
+        password: String,
+        email: String,
+        signupActivity: SignupActivity
+    ) {
         val model = Users(username, password, authRepository.getUserId(), email)
         fireStore.collection("Users").whereEqualTo("username", username)
             .get().addOnSuccessListener {
                 if (it.isEmpty) {
                     viewModelScope.launch {
-                        authRepository.createUser(model).collectLatest {
+                        authRepository.createUser(model,signupActivity).collectLatest {
                             when (it) {
                                 is Resource.Loading -> {
                                     Log.d("TAG555", "Loading: ")

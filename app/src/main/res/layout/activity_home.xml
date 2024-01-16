@@ -6,27 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".presentationlayer.view.HomeActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/theme"
+        android:layout_height="wrap_content"
+        android:background="#31A4D1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/ivLogout"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:padding="14dp"
+            android:layout_gravity="end"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_logout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:focusable="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <SearchView
         android:id="@+id/searchView"
-        android:layout_width="350dp"
-        android:layout_height="45dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/search_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
@@ -35,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        tools:listitem="@layout/home_user_item"
+        tools:listitem="@layout/item_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
