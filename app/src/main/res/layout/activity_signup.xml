@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentationlayer.view.SignupActivity">
+    tools:context="com.example.chatapp.presentationlayer.view.SignupActivity">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="@dimen/_60sdp"
         android:fontFamily="@font/baloobhai_bold"
         android:text="@string/registration"
         android:textColor="@color/black"
@@ -19,11 +19,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_30sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <EditText
         android:id="@+id/cr_usernameET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/register_edittext"
         android:layout_marginHorizontal="20dp"
         android:fontFamily="@font/baloobhai_regular"
@@ -35,7 +46,7 @@
         android:textColorHint="#777777"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <EditText
         android:id="@+id/cr_email"

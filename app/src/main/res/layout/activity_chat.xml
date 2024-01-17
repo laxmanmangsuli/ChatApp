@@ -107,7 +107,7 @@
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:padding="5dp"
-            android:src="@drawable/ic_image_add" />
+            android:src="@drawable/ic_attach" />
 
         <ImageView
             android:id="@+id/sendBTN"

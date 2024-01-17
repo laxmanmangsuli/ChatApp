@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_marginStart="60dp"
     android:layout_marginEnd="10dp"
+    android:layout_marginTop="@dimen/_5sdp"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp">
 
@@ -13,9 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginBottom="7dp"
-        android:background="@drawable/rounded_rect_send"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,13 +42,15 @@
 
         <TextView
             android:id="@+id/tvTime"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:background="@drawable/background"
+            android:gravity="start"
             android:padding="5dp"
             android:text="time"
             android:textColor="#F1EAEA"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivSender" />
 

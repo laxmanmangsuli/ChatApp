@@ -40,13 +40,14 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
     private var isImage = false
     private var isImageOther = false
 
-    companion object {
-        const val VIEW_TYPE_SEND = 1
-        const val VIEW_TYPE_RECEIVE = 2
-        const val VIEW_TYPE_SEND_IMAGE = 3
-        const val VIEW_TYPE_RECEIVE_IMAGE = 4
-        const val VIEW_TYPE_DATE_HEADER = 5
-    }
+    private val VIEW_TYPE_SEND = 1
+     private val VIEW_TYPE_RECEIVE = 2
+     private val VIEW_TYPE_SEND_IMAGE = 3
+     private val VIEW_TYPE_RECEIVE_IMAGE = 4
+     private val VIEW_TYPE_DATE_HEADER = 5
+
+//    companion object {
+//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {

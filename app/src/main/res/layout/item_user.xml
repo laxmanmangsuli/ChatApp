@@ -12,23 +12,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="10dp"
-        android:padding="5dp"
-        android:layout_marginHorizontal="10dp"
+        android:padding="@dimen/_3sdp"
+        android:layout_marginHorizontal="@dimen/_8sdp"
         app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/profileImg"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/recycler_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -52,9 +52,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User Name"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/lastMsgTV"
                 android:layout_width="wrap_content"

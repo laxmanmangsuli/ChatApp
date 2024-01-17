@@ -30,8 +30,17 @@ class HomeActivity : AppCompatActivity() {
         getUsers()
         logout()
         setupSearchView()
+        currentUser()
 
     }
+
+    private fun currentUser() {
+        val currentUsername =SharedPrefs.setUserCredentialUserName
+        Log.e("TAG", "currentUser:$currentUsername")
+        binding.tvUsername.text = currentUsername
+
+    }
+
     private fun setupSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

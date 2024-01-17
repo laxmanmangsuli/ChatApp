@@ -61,7 +61,7 @@ class SignupActivity : AppCompatActivity() {
             binding.crPasswordET.error = "Please Enter Password"
             return false
         }else if(binding.crConfirmPasswordET.text?.isEmpty() == true){
-            binding.crConfirmPasswordET.error = "Please Enter Password"
+            binding.crConfirmPasswordET.error = "Please Enter confirm Password"
             return false
         }
         return true

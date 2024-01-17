@@ -9,6 +9,7 @@ import com.example.chatapp.domain.repository.UsersRepository
 import com.example.chatapp.utils.Resource
 import com.example.chatapp.utils.getChatIdFromSenderAndReceiver
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +60,7 @@ class UsersRepositoryImpl @Inject constructor(private val firebaseFireStore: Fir
                 .collection(Constant.CHAT_COLLECTION)
                 .document(chatId)
                 .collection(chatId)
+                .orderBy("time", Query.Direction.DESCENDING)
                 .addSnapshotListener { value, _ ->
                     Log.e("TAG111", "${value?.documents}")
                     val list = value?.documents?.map { documentSnapshot ->

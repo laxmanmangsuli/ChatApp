@@ -114,10 +114,10 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        binding.progressbar.visibility = View.VISIBLE
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
             val imageUri: Uri? = data?.data
             if (imageUri != null) {
+                binding.progressbar.visibility = View.VISIBLE
                 val imagePath: String = imageUri.toString()
                 val fileName: String = getFileName(applicationContext, imageUri)
                 val ref: StorageReference = FirebaseStorage.getInstance().reference

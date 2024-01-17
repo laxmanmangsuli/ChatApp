@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentationlayer.view.LoginActivity">
+    tools:context="com.example.chatapp.presentationlayer.view.LoginActivity">
 
     <TextView
         android:id="@+id/lastMsgTV"

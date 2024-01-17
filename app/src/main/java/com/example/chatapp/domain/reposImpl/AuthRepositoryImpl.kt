@@ -86,7 +86,7 @@ class AuthRepositoryImpl @Inject constructor(
 
                 if (!emailQuerySnapshot.isEmpty) {
                     val userDoc = emailQuerySnapshot.documents.first()
-//                    val email = userDoc.getString("email")
+                    val userName = userDoc.getString("username")
                     val id = userDoc.getString("userid")
                     firebaseAuth.signInWithEmailAndPassword(username, password)
                         .addOnCompleteListener { authResult ->
@@ -96,6 +96,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     InjectorUtil.showToast("Login successful.")
                                     SharedPrefs.isUserLogin = true
                                     SharedPrefs.setUserCredential = id
+                                    SharedPrefs.setUserCredentialUserName = userName
                                     val intent = Intent(activity, HomeActivity::class.java)
                                     activity.startActivity(intent)
                                     activity.finish()
@@ -112,6 +113,7 @@ class AuthRepositoryImpl @Inject constructor(
             } else {
                 val userDoc = querySnapshot.documents.first()
                 val email = userDoc.getString("email")
+                val userName = userDoc.getString("username")
                 val id = userDoc.getString("userid")
                 if (email != null) {
                     firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -122,6 +124,7 @@ class AuthRepositoryImpl @Inject constructor(
                                     InjectorUtil.showToast("Login successful.")
                                     SharedPrefs.isUserLogin = true
                                     SharedPrefs.setUserCredential = id
+                                    SharedPrefs.setUserCredentialUserName = userName
                                     val intent = Intent(activity, HomeActivity::class.java)
                                     activity.startActivity(intent)
                                     activity.finish()
