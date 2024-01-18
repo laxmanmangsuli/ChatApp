@@ -1,11 +1,15 @@
 package com.example.chatapp.presentationlayer.view
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapp.presentationlayer.viewmodel.LoginViewModel
+import com.example.chatapp.utils.InjectorUtil
 import com.example.chatapps.databinding.ActivityLoginBinding
+import com.example.chatapp.utils.isOnline
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 
@@ -21,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
         login()
         notAccountGoToSignup()
 
+
     }
 
     private fun notAccountGoToSignup() {
@@ -29,12 +34,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun login() {
         binding.loginBTN.setOnClickListener {
+            if (isOnline(this)){
             if (showError()){
                 runBlocking {
                     loginViewModel.loginUser(binding.usernameEmailET.text.toString(),binding.passwordET.text.toString(),this@LoginActivity)
                 }
+            }
+        }else{
+            InjectorUtil.showToast("Check your  internet connection")
+
             }
         }
     }

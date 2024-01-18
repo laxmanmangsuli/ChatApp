@@ -15,32 +15,34 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(private val usersRepository: UsersRepository) :
     ViewModel() {
+
+
+    private var _messages = MutableStateFlow<List<Message?>>(emptyList())
+    val messages: StateFlow<List<Message?>> = _messages
     suspend fun sendMessage(message: Message) {
         viewModelScope.launch {
             usersRepository.sendMessage(message = message)
         }
     }
 
-    private var _messages = MutableStateFlow<List<Message?>>(emptyList())
-    val messages: StateFlow<List<Message?>> = _messages
 
+    suspend fun getAllMessages(receiverId: String) = viewModelScope.launch {
+        usersRepository.getMessage(receiverId).collectLatest {
+            when (it) {
+                is Resource.Success -> {
+                    _messages.value = it.data
+                }
 
-    suspend fun getAllMessages(receiverId: String) =
-        viewModelScope.launch {
-            usersRepository.getMessage(receiverId).collectLatest {
-                when (it) {
-                    is Resource.Success -> {
-                        _messages.value = it.data
-                    }
-
-                    is Resource.Loading -> {
+                is Resource.Loading -> {
 //                    iMessagesView.showProgressBar()
-                    }
+                }
 
-                    is Resource.Error -> {
+                is Resource.Error -> {
 //                    iMessagesView.showError(it.message?:"An Error Occurred")
-                    }
                 }
             }
         }
+    }
+
+
 }

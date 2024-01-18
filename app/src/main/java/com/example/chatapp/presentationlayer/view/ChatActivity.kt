@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.data.Message
 import com.example.chatapp.presentationlayer.adapter.MessageAdapter
+import com.example.chatapp.presentationlayer.stickyheader.StickyHeaderItemDecorationDate
 import com.example.chatapp.presentationlayer.viewmodel.ChatViewModel
 import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapp.utils.getChatIdFromSenderAndReceiver
@@ -23,10 +25,15 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
@@ -35,6 +42,9 @@ class ChatActivity : AppCompatActivity() {
     private val chatViewModel: ChatViewModel by viewModels()
     private var receiverId = ""
     private val PICK_IMAGE_REQUEST = 101
+    private val todayCalendar = Calendar.getInstance()
+    private val messageCalendar = Calendar.getInstance()
+    private val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -48,6 +58,7 @@ class ChatActivity : AppCompatActivity() {
         sendMessage(receiverId)
         back()
         getImage()
+
 
     }
 
@@ -103,6 +114,12 @@ class ChatActivity : AppCompatActivity() {
                         binding.messageRecView.adapter = myAdapter
                         binding.messageRecView.layoutManager =
                             LinearLayoutManager(this@ChatActivity)
+                        val itemDecoration = StickyHeaderItemDecorationDate(
+                            0,
+                            getSectionCallback(sortedMessages as List<Message>)
+                        )
+                        binding.messageRecView.addItemDecoration(itemDecoration)
+
                         (binding.messageRecView.layoutManager as LinearLayoutManager).scrollToPosition(
                             data.size - 1
                         )
@@ -166,6 +183,48 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         return uri.lastPathSegment ?: "unknown"
+    }
+
+    private fun getSectionCallback(messages: List<Message>): StickyHeaderItemDecorationDate.SectionCallback {
+        return object : StickyHeaderItemDecorationDate.SectionCallback {
+            override fun isSection(position: Int): Boolean {
+                if (messages.isEmpty() || position >= messages.size || position == 0) {
+                    return true
+                }
+                val currentMessage = messages[position]
+                val previousMessage = messages[position - 1]
+
+                return !isSameDay(currentMessage.time, previousMessage.time)
+            }
+
+            override fun getSectionHeader(position: Int): CharSequence? {
+                if (messages.isEmpty() || position >= messages.size) {
+                    return null
+                }
+
+                val messageTime = messages[position].time
+                if (isSameDay(messageTime, System.currentTimeMillis())) {
+                    return "Today"
+                } else if (isSameDay(messageTime, System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)) {
+                    return "Yesterday"
+                }
+                return dateFormat.format(Date(messageTime))
+            }
+
+        }
+    }
+    private fun isSameDay(time1: Long, time2: Long): Boolean {
+        todayCalendar.timeInMillis = time1
+        messageCalendar.timeInMillis = time2
+
+        return todayCalendar.get(Calendar.YEAR) == messageCalendar.get(Calendar.YEAR) &&
+                todayCalendar.get(Calendar.DAY_OF_YEAR) == messageCalendar.get(Calendar.DAY_OF_YEAR)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.messageRecView.adapter = myAdapter
+        myAdapter.markAllMessagesAsRead()
     }
 
 }

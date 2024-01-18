@@ -98,7 +98,6 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = oldList[position]
-
         when (holder.itemViewType) {
             VIEW_TYPE_SEND -> (holder as SendViewHolder).bindSend(item)
             VIEW_TYPE_RECEIVE -> (holder as ReceiveViewHolder).bindReceive(item)
@@ -197,17 +196,15 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
         ViewHolder(dBinding.root) {
         @RequiresApi(Build.VERSION_CODES.O)
         fun bindDateHeader(message: Message?) {
+            val date = message?.time?.let { convertMillisToDate(it) }
+            dBinding.tvDateHeader.text = date
             if (isText) {
                 dBinding.constraintLayout.visibility = View.VISIBLE
-                val date = message?.time?.let { convertMillisToDate(it) }
-                dBinding.tvDateHeader.text = date
                 dBinding.messageTV.text = message?.content
                 val time = message?.time?.let { convertMillisToHourMinuteFormatWithAMPM(it) }
                 dBinding.tvTime.text = time
             } else if (isImage) {
                 dBinding.constraintLayoutImageSend.visibility = View.VISIBLE
-                val date = message?.time?.let { convertMillisToDate(it) }
-                dBinding.tvDateHeader.text = date
                 val time = message?.time?.let { convertMillisToHourMinuteFormatWithAMPM(it) }
                 dBinding.tvTimeImage.text = time
                 val imageUri = Uri.parse(message?.imageUri)
@@ -230,15 +227,11 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
                 }
             } else if (isTextOther) {
                 dBinding.constraintLayoutReceive.visibility = View.VISIBLE
-                val date = message?.time?.let { convertMillisToDate(it) }
-                dBinding.tvDateHeader.text = date
                 dBinding.messageTvReceive.text = message?.content
                 val time = message?.time?.let { convertMillisToHourMinuteFormatWithAMPM(it) }
                 dBinding.tvTimeReceive.text = time
             } else if (isImageOther) {
                 dBinding.constraintLayoutImageReceive.visibility = View.VISIBLE
-                val date = message?.time?.let { convertMillisToDate(it) }
-                dBinding.tvDateHeader.text = date
                 val time = message?.time?.let { convertMillisToHourMinuteFormatWithAMPM(it) }
                 dBinding.tvTimeImageReceive.text = time
                 val imageUri = Uri.parse(message?.imageUri)
@@ -305,7 +298,6 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isDifferentDate(position: Int): Boolean {
         if (position > 0) {
@@ -335,19 +327,29 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
     fun convertMillisToDate(milliseconds: Long): String {
         val instant = Instant.ofEpochMilli(milliseconds)
         val localDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate()
-        return if (isToday(localDate)) {
-            "Today"
-        } else {
-            val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
-            localDate.format(formatter)
+
+        return when {
+            isToday(localDate) -> "Today"
+            isYesterday(localDate) -> "Yesterday"
+            else -> {
+                val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
+                localDate.format(formatter)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isToday(date: LocalDate): Boolean {
         val today = LocalDate.now()
-        return today.isEqual(date)
+        return date == today
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun isYesterday(date: LocalDate): Boolean {
+        val yesterday = LocalDate.now().minusDays(1)
+        return date == yesterday
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isSameDay(date1: Long, date2: Long): Boolean {
@@ -359,9 +361,17 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
                 .toLocalDate()
         return localDate1.isEqual(localDate2)
     }
+
+    fun markAllMessagesAsRead() {
+        val updatedList = oldList.map { it?.copy(isRead = true) }
+        oldList = updatedList
+        notifyDataSetChanged()
+    }
+
+
 }
 
-
+//
 //class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
 //
 //    private var oldList = emptyList<Message?>()

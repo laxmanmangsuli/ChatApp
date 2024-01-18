@@ -5,4 +5,5 @@ data class Users(
     val password: String,
     val userid: String,
     val email: String,
+    var count :Int = 0
 )

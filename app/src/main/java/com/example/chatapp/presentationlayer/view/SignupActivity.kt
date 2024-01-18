@@ -1,12 +1,15 @@
 package com.example.chatapp.presentationlayer.view
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.chatapp.presentationlayer.viewmodel.SignUpViewModel
 import com.example.chatapp.utils.Constant
 import com.example.chatapp.utils.InjectorUtil
+import com.example.chatapp.utils.isOnline
 import com.example.chatapps.databinding.ActivitySignupBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,23 +32,33 @@ class SignupActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun signup() {
         binding.signupBTN.setOnClickListener {
-            if (showError()){
-                if (Constant.isValidEmail(binding.crEmail.text.toString())){
-                    if (Constant.isPasswordValid(password = binding.crPasswordET.text.toString())){
-                        if (binding.crPasswordET.text.toString() ==  binding.crConfirmPasswordET.text.toString()){
-                            signUpViewModel.createUserProfile(binding.crUsernameET.text.toString(), binding.crPasswordET.text.toString(),binding.crEmail.text.toString(),this)
+            if (isOnline(this)) {
+                if (showError()) {
+                    if (Constant.isValidEmail(binding.crEmail.text.toString())) {
+                        if (Constant.isPasswordValid(password = binding.crPasswordET.text.toString())) {
+                            if (binding.crPasswordET.text.toString() == binding.crConfirmPasswordET.text.toString()) {
+                                signUpViewModel.createUserProfile(
+                                    binding.crUsernameET.text.toString(),
+                                    binding.crPasswordET.text.toString(),
+                                    binding.crEmail.text.toString(),
+                                    this
+                                )
 
-                        }else{
-                            InjectorUtil.showToast("Passwords do not match")
+                            } else {
+                                InjectorUtil.showToast("Passwords do not match")
+                            }
+                        } else {
+                            InjectorUtil.showToast("Password must contain at least 8 characters, 1 capital letter, and 1 symbol")
                         }
-                    }else{
-                        InjectorUtil.showToast("Password must contain at least 8 characters, 1 capital letter, and 1 symbol")
+                    } else {
+                        InjectorUtil.showToast("Email not valid")
                     }
-                }else{
-                    InjectorUtil.showToast("Email not valid")
                 }
+            }else{
+                InjectorUtil.showToast("Check your  internet connection")
             }
         }
     }
@@ -61,7 +74,7 @@ class SignupActivity : AppCompatActivity() {
             binding.crPasswordET.error = "Please Enter Password"
             return false
         }else if(binding.crConfirmPasswordET.text?.isEmpty() == true){
-            binding.crConfirmPasswordET.error = "Please Enter confirm Password"
+            binding.crConfirmPasswordET.error = "Please Enter Password"
             return false
         }
         return true

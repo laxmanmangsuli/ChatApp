@@ -1,6 +1,7 @@
 package com.example.chatapp.data
 
 data class Message(
+    var isRead :Boolean = false,
     val type: String ="",
     val imageUri: String,
     val content: String = "",
@@ -12,5 +13,5 @@ data class Message(
     val chatId: String = "",
 )
 {
-    constructor() : this("", "", "", 0, "", "", "", "", "")
+    constructor() : this(false,"", "", "", 0, "", "", "", "", "")
 }
