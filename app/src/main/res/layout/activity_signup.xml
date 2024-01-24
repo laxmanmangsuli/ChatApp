@@ -120,24 +120,48 @@
             android:textColorHint="#777777" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/signupBTN"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:textAllCaps="false"
-        android:background="@drawable/recycler_background"
         android:layout_marginHorizontal="20dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:fontFamily="@font/baloobhai_medium"
-        android:text="@string/submit"
-        android:textColor="@color/white"
-        android:textSize="18sp"
+        android:background="@drawable/recycler_background"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPasswordLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/etPasswordLayout2" >
+
+        <TextView
+            android:id="@+id/tvSignup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/baloobhai_medium"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/submit"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/textView2"

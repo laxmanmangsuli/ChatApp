@@ -1,7 +1,7 @@
 package com.example.chatapp.data
 
 data class Message(
-    var isRead :Boolean = false,
+    var readMessage :Boolean = false,
     val type: String ="",
     val imageUri: String,
     val content: String = "",

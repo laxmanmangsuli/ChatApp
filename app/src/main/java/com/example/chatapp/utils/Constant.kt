@@ -13,4 +13,6 @@ object Constant {
     }
 
     const val CHAT_COLLECTION = "Chats"
-}
+
+        const val FULL_SCREEN_IMAGE_REQUEST_CODE = 123
+    }

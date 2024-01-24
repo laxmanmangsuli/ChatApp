@@ -1,26 +1,24 @@
 package com.example.chatapp.presentationlayer.view
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.data.User
 import com.example.chatapp.domain.repository.UsersRepository
-import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapp.presentationlayer.adapter.OtherUserAdapter
 import com.example.chatapp.presentationlayer.viewmodel.HomePageViewModel
 import com.example.chatapp.utils.Resource
+import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapps.databinding.ActivityHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,25 +39,23 @@ class HomeActivity : AppCompatActivity() {
         setupSearchView()
         currentUser()
         getLastMessage()
-        unreadMessage()
 
     }
     private fun getLastMessage() {
         val userIds = userList.map { it.userid }
         userIds.forEach { userId ->
             lifecycleScope.launch {
-                usersRepository.getMessage(userId).collect { resource ->
+                usersRepository.getLastMessageAndUnreadCount(userId).collect { resource ->
                     when (resource) {
                         is Resource.Success -> {
-                            val lastMessage = resource.data.firstOrNull()
+                            val data = resource.data
                             val user = userList.find { it.userid == userId }
-                            myAdapter.setLastMessage(user!!, lastMessage)
+                            myAdapter.setLastMessage(user!!, data.lastMessage)
+                            myAdapter.setUnreadMessageCount(user.userid, data.unreadCount, data.lastMessage)
                         }
                         is Resource.Loading -> {
-
                         }
                         is Resource.Error -> {
-
                         }
                     }
                 }
@@ -67,19 +63,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun unreadMessage() {
-        lifecycleScope.launch {
-            userList.forEach { user ->
-                val unreadMessages = homePageViewModel.getUnreadMessageCountForUser(user.userid)
-                myAdapter.setTotalMessages(user.userid, unreadMessages)
-            }
-        }
-    }
-
 
     private fun currentUser() {
         val currentUsername =SharedPrefs.setUserCredentialUserName
-        Log.e("TAG", "currentUser:$currentUsername")
         binding.tvUsername.text = currentUsername
 
     }
@@ -112,7 +98,6 @@ class HomeActivity : AppCompatActivity() {
     private fun getUsers() {
         runBlocking {
             userList = SharedPrefs.setUserCredential?.let { homePageViewModel.getOtherUsers() } ?: emptyList()
-            Log.d("TAG666", "HomeActivity: $userList")
             binding.otherUserRV.apply {
                 layoutManager = LinearLayoutManager(this@HomeActivity)
                 adapter = myAdapter
@@ -120,8 +105,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
     private fun logout() {
         binding.ivLogout.setOnClickListener {
@@ -140,10 +123,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-//        getLastMessage()
-//        totalMessage()
-//        unreadMessage()
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
+
 }

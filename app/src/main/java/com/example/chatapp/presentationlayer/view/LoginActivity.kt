@@ -3,6 +3,7 @@ package com.example.chatapp.presentationlayer.view
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity : AppCompatActivity(){
+    lateinit var binding: ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -40,6 +42,8 @@ class LoginActivity : AppCompatActivity() {
             if (isOnline(this)){
             if (showError()){
                 runBlocking {
+                    binding.btnLogin.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
                     loginViewModel.loginUser(binding.usernameEmailET.text.toString(),binding.passwordET.text.toString(),this@LoginActivity)
                 }
             }

@@ -51,12 +51,5 @@ class SharedPrefs {
             get() = getInstance().pref.getString("setUserCredentialUserName", null)
             set(value) = getInstance().edit { putString("setUserCredentialUserName", value) }
 
-        /*var appPassword: String?
-            get() = getInstance().pref.getString("appPassword",null)
-            set(value) = getInstance().edit { putString("appPassword", value) }
-
-        var shouldShowInitialBlockActivity: Boolean
-            get() = getInstance().pref.getBoolean("shouldShowInitial", true)
-            set(value) = getInstance().edit { putBoolean("shouldShowInitial", value) }*/
     }
 }

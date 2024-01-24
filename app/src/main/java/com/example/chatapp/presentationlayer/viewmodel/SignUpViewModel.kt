@@ -1,6 +1,7 @@
 package com.example.chatapp.presentationlayer.viewmodel
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatapp.utils.InjectorUtil
@@ -28,20 +29,24 @@ class SignUpViewModel @Inject constructor(
     ) {
         val model = Users(username, password, authRepository.getUserId(), email)
         fireStore.collection("Users").whereEqualTo("username", username)
-            .get().addOnSuccessListener {
+            .get().addOnSuccessListener { it ->
                 if (it.isEmpty) {
                     viewModelScope.launch {
                         authRepository.createUser(model,signupActivity).collectLatest {
                             when (it) {
                                 is Resource.Loading -> {
-                                    Log.d("TAG555", "Loading: ")
+                                    signupActivity.binding.progressBar.visibility = View.VISIBLE
+                                    signupActivity.binding.tvSignup.visibility = View.GONE
                                 }
 
                                 is Resource.Error -> {
-                                    Log.d("TAG555", "Error: ")
+                                    signupActivity.binding.progressBar.visibility = View.GONE
+                                    signupActivity.binding.tvSignup.visibility = View.VISIBLE
                                 }
 
                                 is Resource.Success -> {
+                                    signupActivity.binding.progressBar.visibility = View.GONE
+                                    signupActivity.binding.tvSignup.visibility = View.VISIBLE
                                     sendEmailVarification(email, password)
                                 }
                             }

@@ -18,6 +18,7 @@ import com.example.chatapp.data.Message
 import com.example.chatapp.presentationlayer.adapter.MessageAdapter
 import com.example.chatapp.presentationlayer.stickyheader.StickyHeaderItemDecorationDate
 import com.example.chatapp.presentationlayer.viewmodel.ChatViewModel
+import com.example.chatapp.utils.Resource
 import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapp.utils.getChatIdFromSenderAndReceiver
 import com.example.chatapps.databinding.ActivityChatBinding
@@ -25,7 +26,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -34,10 +34,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 @AndroidEntryPoint
 class ChatActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityChatBinding
+    public lateinit var binding: ActivityChatBinding
     private var myAdapter: MessageAdapter = MessageAdapter()
     private val chatViewModel: ChatViewModel by viewModels()
     private var receiverId = ""
@@ -53,14 +54,16 @@ class ChatActivity : AppCompatActivity() {
         receiverId = intent.getStringExtra("userid").toString()
         val username = intent.getStringExtra("username")
         binding.username.text = username
-
         getAllMessages(receiverId)
         sendMessage(receiverId)
         back()
         getImage()
-
-
     }
+
+    private fun markMessageAsRead() {
+        chatViewModel.markMessageAsRead(receiverId)
+    }
+
 
     private fun getImage() {
         binding.ivSelectImage.setOnClickListener {
@@ -83,11 +86,12 @@ class ChatActivity : AppCompatActivity() {
             if (receiverId != null && messages.isNotEmpty()) {
                 lifecycleScope.launch {
                     val message = Message(
+                        readMessage =false,
                         type = "txt",
                         content = messages,
                         imageUri = "",
                         time = System.currentTimeMillis(),
-                        messageId = "",
+                        messageId = System.currentTimeMillis().toString(),
                         currentUser = SharedPrefs.setUserCredential ?: "",
                         senderId = SharedPrefs.setUserCredential ?: "",
                         receiverId = receiverId,
@@ -103,10 +107,11 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+
     private fun getAllMessages(receiverId: String?) {
         lifecycleScope.launch {
             if (receiverId != null) {
-                chatViewModel.getAllMessages(receiverId)
+                chatViewModel.getAllMessages(receiverId,this@ChatActivity)
                 chatViewModel.messages.onEach { data ->
                     withContext(Dispatchers.Main) {
                         val sortedMessages = data.sortedBy { it?.time }
@@ -123,6 +128,7 @@ class ChatActivity : AppCompatActivity() {
                         (binding.messageRecView.layoutManager as LinearLayoutManager).scrollToPosition(
                             data.size - 1
                         )
+                        markMessageAsRead()
                     }
                 }.launchIn(lifecycleScope)
             }
@@ -143,11 +149,12 @@ class ChatActivity : AppCompatActivity() {
                     ref.child("file/$fileName").downloadUrl.addOnSuccessListener { uri ->
                         lifecycleScope.launch {
                             val message = Message(
+                                readMessage =false,
                                 type = "img",
                                 content = "",
                                 imageUri = "$uri",
                                 time = System.currentTimeMillis(),
-                                messageId = "",
+                                messageId = System.currentTimeMillis().toString(),
                                 currentUser = SharedPrefs.setUserCredential ?: "",
                                 senderId = SharedPrefs.setUserCredential ?: "",
                                 receiverId = receiverId,
@@ -205,7 +212,11 @@ class ChatActivity : AppCompatActivity() {
                 val messageTime = messages[position].time
                 if (isSameDay(messageTime, System.currentTimeMillis())) {
                     return "Today"
-                } else if (isSameDay(messageTime, System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS)) {
+                } else if (isSameDay(
+                        messageTime,
+                        System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS
+                    )
+                ) {
                     return "Yesterday"
                 }
                 return dateFormat.format(Date(messageTime))
@@ -213,6 +224,7 @@ class ChatActivity : AppCompatActivity() {
 
         }
     }
+
     private fun isSameDay(time1: Long, time2: Long): Boolean {
         todayCalendar.timeInMillis = time1
         messageCalendar.timeInMillis = time2
@@ -223,8 +235,9 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.messageRecView.adapter = myAdapter
-        myAdapter.markAllMessagesAsRead()
+//        markMessageAsRead()
+//        observeMessageReadStatus()
+//        binding.messageRecView.adapter = myAdapter
     }
 
 }

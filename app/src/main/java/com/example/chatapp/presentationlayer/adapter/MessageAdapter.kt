@@ -3,7 +3,6 @@ package com.example.chatapp.presentationlayer.adapter
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,20 +33,15 @@ import java.util.Locale
 class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     private var oldList = emptyList<Message?>()
-
     private var isText = false
     private var isTextOther = false
     private var isImage = false
     private var isImageOther = false
-
     private val VIEW_TYPE_SEND = 1
      private val VIEW_TYPE_RECEIVE = 2
      private val VIEW_TYPE_SEND_IMAGE = 3
      private val VIEW_TYPE_RECEIVE_IMAGE = 4
      private val VIEW_TYPE_DATE_HEADER = 5
-
-//    companion object {
-//    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -98,10 +92,11 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = oldList[position]
+//        SharedPrefs.clearUserCount(SharedPrefs.setUserCredential!!)
         when (holder.itemViewType) {
             VIEW_TYPE_SEND -> (holder as SendViewHolder).bindSend(item)
             VIEW_TYPE_RECEIVE -> (holder as ReceiveViewHolder).bindReceive(item)
-            VIEW_TYPE_SEND_IMAGE -> (holder as SendViewImageViewHolder).bindImageSend(item)
+            VIEW_TYPE_SEND_IMAGE -> (holder as SendViewImageViewHolder).bindImageSend(item,position)
             VIEW_TYPE_RECEIVE_IMAGE -> (holder as ReceiveImageViewHolder).bindImageReceive(item)
             VIEW_TYPE_DATE_HEADER -> (holder as DateHeaderViewHolder).bindDateHeader(item)
         }
@@ -143,7 +138,14 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
         ViewHolder(sBinding.root) {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bindImageSend(message: Message?) {
+        fun bindImageSend(message: Message?, position: Int) {
+//            sBinding.ivSender.setOnClickListener {
+//                val intent = Intent(sBinding.ivSender.context, FullScreenImageActivity::class.java)
+//                intent.putExtra("imageUri", message?.imageUri)
+//                intent.putExtra("position", position)
+//                (sBinding.ivSender.context as Activity).startActivityForResult(intent, FULL_SCREEN_IMAGE_REQUEST_CODE)
+//            }
+
             val time = message?.time?.let { convertMillisToHourMinuteFormatWithAMPM(it) }
             sBinding.tvTime.text = time
             val imageUri = Uri.parse(message?.imageUri)
@@ -310,8 +312,8 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     fun setData(newList: List<Message?>) {
         val diffUtil = MessageDffUtil(oldList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
         oldList = newList
+        val diffResult = DiffUtil.calculateDiff(diffUtil)
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -362,14 +364,24 @@ class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {
         return localDate1.isEqual(localDate2)
     }
 
-    fun markAllMessagesAsRead() {
-        val updatedList = oldList.map { it?.copy(isRead = true) }
-        oldList = updatedList
-        notifyDataSetChanged()
-    }
+
+
 
 
 }
+
+//fun markMessageAsRead(position: Int) {
+//    if (position >= 0 && position < oldList.size) {
+//        val updatedList = oldList.toMutableList()
+//        val message = updatedList[position]
+//        if (message != null && !message.isRead) {
+//            updatedList[position] = message.copy(isRead = true)
+//            notifyItemChanged(position)
+//            updateFirestoreMessageReadStatus(message.chatId)
+//        }
+//    }
+//}
+
 
 //
 //class MessageAdapter : RecyclerView.Adapter<ViewHolder>() {

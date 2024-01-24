@@ -3,6 +3,7 @@ package com.example.chatapp.presentationlayer.view
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SignupActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySignupBinding
+    public lateinit var binding: ActivitySignupBinding
     private val signUpViewModel : SignUpViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
@@ -39,6 +41,8 @@ class SignupActivity : AppCompatActivity() {
                 if (showError()) {
                     if (Constant.isValidEmail(binding.crEmail.text.toString())) {
                         if (Constant.isPasswordValid(password = binding.crPasswordET.text.toString())) {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.tvSignup.visibility = View.GONE
                             if (binding.crPasswordET.text.toString() == binding.crConfirmPasswordET.text.toString()) {
                                 signUpViewModel.createUserProfile(
                                     binding.crUsernameET.text.toString(),

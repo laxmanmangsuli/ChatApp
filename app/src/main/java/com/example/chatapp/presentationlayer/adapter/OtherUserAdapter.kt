@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.chatapp.data.Message
 import com.example.chatapp.data.User
 import com.example.chatapp.presentationlayer.view.ChatActivity
+import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapp.utils.UserDiffUtil
 import com.example.chatapps.databinding.ItemUserBinding
 import kotlinx.coroutines.CoroutineScope
@@ -23,8 +24,6 @@ class OtherUserAdapter(private val context: Context) : RecyclerView.Adapter<Othe
 
     private val userLastMessages = mutableMapOf<String, Message?>()
     private val userUnreadMessageCounts = mutableMapOf<String, Int>()
-
-
     class UserViewHolder(val binding: ItemUserBinding):ViewHolder(binding.root)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -34,16 +33,13 @@ class OtherUserAdapter(private val context: Context) : RecyclerView.Adapter<Othe
         override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
             val item = oldList[position]
 
-//            val unreadCount = userUnreadMessageCounts[item.userid] ?: 0
-//            holder.binding.tvUnreadMessage.text = unreadCount.toString()
-            holder.binding.tvUnreadMessage.text = item.unreadMessageCount.toString()
-
-//            if (item.unreadMessageCount > 0){
-//                holder.binding.constraintLayoutUnreadMessage.visibility = View.VISIBLE
-//                holder.binding.tvUnreadMessage.text = item.unreadMessageCount.toString()
-//            }else{
-//                holder.binding.constraintLayoutUnreadMessage.visibility = View.GONE
-//            }
+            val unreadCount = userUnreadMessageCounts[item.userid] ?: 0
+            if (unreadCount > 0) {
+                holder.binding.constraintLayoutUnreadMessage.visibility = View.VISIBLE
+                holder.binding.tvUnreadMessage.text = unreadCount.toString()
+            } else {
+                holder.binding.constraintLayoutUnreadMessage.visibility = View.GONE
+            }
 
             holder.binding.usernameTV.text = item.username
             val lastMessage = userLastMessages[item.userid]
@@ -77,21 +73,17 @@ class OtherUserAdapter(private val context: Context) : RecyclerView.Adapter<Othe
             notifyDataSetChanged()
         }
     }
-
-    fun setTotalMessages(userId: String, unreadMessage: Int) {
-        val userIndex = oldList.indexOfFirst { it.userid == userId }
-        if (userIndex != -1) {
-            oldList[userIndex].unreadMessageCount = unreadMessage
-            notifyItemChanged(userIndex)
+    fun setUnreadMessageCount(userId: String, unreadCount: Int, lastMessage: Message?) {
+        if (lastMessage?.senderId != SharedPrefs.setUserCredential) {
+            userUnreadMessageCounts[userId] = unreadCount
+            val userIndex = oldList.indexOfFirst { it.userid == userId }
+            if (userIndex != -1) {
+                notifyItemChanged(userIndex)
+            }
         }
     }
 
 }
 
-//fun updateUnreadMessageCount(userId: String, unreadMessageCount: Int) {
-//    val userToUpdate = oldList.find { it.userid == userId }
-//    userToUpdate?.unreadMessageCount = unreadMessageCount
-//    notifyItemChanged(oldList.indexOf(userToUpdate))
-//}
 
 

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_marginTop="7dp"
-    android:layout_marginStart="70dp"
     android:layout_marginEnd="10dp"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="5dp">
@@ -26,6 +25,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloobhai_regular"
             android:paddingStart="8dp"
+            android:maxWidth="@dimen/_230sdp"
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
             android:text="@string/hello"

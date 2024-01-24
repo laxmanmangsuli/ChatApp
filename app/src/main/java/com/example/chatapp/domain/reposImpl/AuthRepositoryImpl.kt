@@ -1,6 +1,7 @@
 package com.example.chatapp.domain.reposImpl
 
 import android.content.Intent
+import android.view.View
 import com.example.chatapp.utils.InjectorUtil
 import com.example.chatapp.utils.SharedPrefs
 import com.example.chatapp.data.Users
@@ -94,21 +95,30 @@ class AuthRepositoryImpl @Inject constructor(
                                 val user = firebaseAuth.currentUser
                                 if (user != null && user.isEmailVerified) {
                                     InjectorUtil.showToast("Login successful.")
+                                    activity.binding.progressBar.visibility = View.GONE
+                                    activity.binding.btnLogin.visibility = View.VISIBLE
                                     SharedPrefs.isUserLogin = true
                                     SharedPrefs.setUserCredential = id
                                     SharedPrefs.setUserCredentialUserName = userName
                                     val intent = Intent(activity, HomeActivity::class.java)
                                     activity.startActivity(intent)
                                     activity.finish()
+
                                 } else {
                                     InjectorUtil.showToast("Please verify your email.")
+                                    activity.binding.progressBar.visibility = View.GONE
+                                    activity.binding.btnLogin.visibility = View.VISIBLE
                                 }
                             } else {
                                 InjectorUtil.showToast("Authentication failed.")
+                                activity.binding.progressBar.visibility = View.GONE
+                                activity.binding.btnLogin.visibility = View.VISIBLE
                             }
                         }
                 } else {
                     InjectorUtil.showToast("Username or email not found.")
+                    activity.binding.progressBar.visibility = View.GONE
+                    activity.binding.btnLogin.visibility = View.VISIBLE
                 }
             } else {
                 val userDoc = querySnapshot.documents.first()
@@ -122,6 +132,8 @@ class AuthRepositoryImpl @Inject constructor(
                                 val user = firebaseAuth.currentUser
                                 if (user != null && user.isEmailVerified) {
                                     InjectorUtil.showToast("Login successful.")
+                                    activity.binding.progressBar.visibility = View.GONE
+                                    activity.binding.btnLogin.visibility = View.VISIBLE
                                     SharedPrefs.isUserLogin = true
                                     SharedPrefs.setUserCredential = id
                                     SharedPrefs.setUserCredentialUserName = userName
@@ -130,17 +142,24 @@ class AuthRepositoryImpl @Inject constructor(
                                     activity.finish()
                                 } else {
                                     InjectorUtil.showToast("Please verify your email.")
+                                    activity.binding.progressBar.visibility = View.GONE
+                                    activity.binding.btnLogin.visibility = View.VISIBLE
                                 }
                             } else {
                                 InjectorUtil.showToast("Authentication failed.")
+                                activity.binding.progressBar.visibility = View.GONE
+                                activity.binding.btnLogin.visibility = View.VISIBLE
                             }
                         }
                 }
             }
         } catch (e: Exception) {
             InjectorUtil.showToast("An error occurred.")
+            activity.binding.progressBar.visibility = View.GONE
+            activity.binding.btnLogin.visibility = View.VISIBLE
         }
     }
+
 
 
 }

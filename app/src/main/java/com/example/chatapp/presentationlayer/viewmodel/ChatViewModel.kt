@@ -1,9 +1,11 @@
 package com.example.chatapp.presentationlayer.viewmodel
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatapp.data.Message
 import com.example.chatapp.domain.repository.UsersRepository
+import com.example.chatapp.presentationlayer.view.ChatActivity
 import com.example.chatapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +18,24 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(private val usersRepository: UsersRepository) :
     ViewModel() {
 
+    private val _messageReadStatus = MutableStateFlow<Resource<Boolean>>(Resource.Loading)
 
     private var _messages = MutableStateFlow<List<Message?>>(emptyList())
     val messages: StateFlow<List<Message?>> = _messages
+
+    fun markMessageAsRead(receiverId: String) {
+        viewModelScope.launch {
+            try {
+                _messageReadStatus.value = Resource.Loading
+                usersRepository.markMessageAsRead(receiverId)
+                    .collect {
+                        _messageReadStatus.value = it
+                    }
+            } catch (e: Exception) {
+                _messageReadStatus.value = Resource.Error("Error marking messages as read")
+            }
+        }
+    }
     suspend fun sendMessage(message: Message) {
         viewModelScope.launch {
             usersRepository.sendMessage(message = message)
@@ -26,19 +43,22 @@ class ChatViewModel @Inject constructor(private val usersRepository: UsersReposi
     }
 
 
-    suspend fun getAllMessages(receiverId: String) = viewModelScope.launch {
+
+
+    suspend fun getAllMessages(receiverId: String, chatActivity: ChatActivity) = viewModelScope.launch {
         usersRepository.getMessage(receiverId).collectLatest {
             when (it) {
                 is Resource.Success -> {
                     _messages.value = it.data
+                    chatActivity.binding.progressBar.visibility = View.GONE
                 }
 
                 is Resource.Loading -> {
-//                    iMessagesView.showProgressBar()
+                    chatActivity.binding.progressBar.visibility = View.VISIBLE
                 }
 
                 is Resource.Error -> {
-//                    iMessagesView.showError(it.message?:"An Error Occurred")
+                    chatActivity.binding.progressBar.visibility = View.GONE
                 }
             }
         }
